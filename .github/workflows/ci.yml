@@ -130,11 +130,15 @@ jobs:
         run: stellar contract inspect --wasm wasm/stakewell_staking.wasm
 
   # ── Job 4: Deploy to Cloudflare Pages (on main push only) ───────────────────
+  # Primary deploy: Cloudflare Pages Git integration auto-deploys on push to main.
+  # This job is a secondary CI-triggered deploy — requires CLOUDFLARE_API_TOKEN
+  # and CLOUDFLARE_ACCOUNT_ID secrets to be set in repo Settings → Secrets.
   deploy:
     name: Deploy — Cloudflare Pages
     runs-on: ubuntu-latest
     needs: [contracts, frontend]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -147,6 +151,7 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
+        continue-on-error: true
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

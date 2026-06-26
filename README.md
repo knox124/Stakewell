@@ -169,30 +169,27 @@ Three distinct, clearly differentiated error states are handled:
 
 ## Screenshots
 
-> Screenshots should be captured after the live deployment is running. The following sections describe exactly what to capture:
+### 🎬 Interactive Staking Walkthrough (GIF Demo)
+Here is a full interactive demonstration showing wallet connection, staking native XLM, real-time APY accrual ticking at 12% APY, claiming RWD rewards, and visual TxToasts:
 
-### Wallet Connected State
-Connect Freighter to testnet, screenshot the nav bar showing truncated address + XLM balance.
-
-### Stake Flow
-Enter an amount (e.g. 10 XLM) in the Stake panel, screenshot showing the amount input, percent shortcuts, and estimated APY earnings. Then submit and screenshot the pending TxToast.
-
-### Live APY / Rewards Ticker on the Dashboard
-After staking, screenshot the hero section showing the 6-decimal animated RWD counter incrementing. The `Live Accrual` indicator should be visible and pulsing green.
-
-### Successful Claim + Transaction Confirmation
-Click "Claim Rewards", screenshot the success TxToast showing the real transaction hash with a link to Stellar Expert.
-
-### Mobile Responsive UI
-Open DevTools → responsive mode at 375px width. Screenshot the stacked single-column layout with the Stake panel above the Dashboard.
-
-### CI/CD Pipeline Run
-Go to `https://github.com/knox124/Stakewell/actions` after pushing to main. Screenshot the green checkmarks on all 4 jobs (Contracts, Frontend, Integration Check, Deploy).
-
-### Test Output
-See the **Testing** section below for the real terminal output.
+![Stakewell Working Demo](screenshots/workig%20demo.gif)
 
 ---
+
+### 💻 Desktop Interface & Staking panel
+The main home screen layout including our custom 3D animated hero orb and real-time status details:
+
+![Stakewell Homepage](screenshots/homepage.png)
+
+---
+
+### 📊 Active Staked Dashboard
+The user dashboard in a connected state, displaying the live incrementing reward ticker, current staked principal, and active unstake input:
+
+![Stakewell Staking](screenshots/staking.png)
+
+---
+
 
 ## Setup Instructions
 

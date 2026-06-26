@@ -310,23 +310,6 @@ test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 ---
 
-## Commit History Summary
-
-| Commit | Message |
-|--------|---------|
-| 1 | `chore: project scaffold (Next.js + Soroban workspace)` |
-| 2 | `feat: RWD token contract` |
-| 3 | `feat: rewards contract — accrual model and register_stake` |
-| 4 | `feat: staking contract — stake with custody + rewards checkpoint` |
-| 5 | `test: rewards + staking unit tests (9 passing)` |
-| 6 | `feat: wallet connect/disconnect via StellarWalletsKit` |
-| 7 | `feat: mobile responsive layout` |
-| 8 | `ci: GitHub Actions pipeline for contracts + frontend (4 jobs)` |
-| 9 | `chore: testnet deployment + real contract addresses wired in` |
-| 10 | `docs: README with full evidence` |
-
----
-
 ## License
 
 MIT

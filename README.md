@@ -12,9 +12,9 @@
 
 ## Project Description
 
-Stakewell is a production-grade Stellar Soroban dApp where users stake native XLM into a smart contract pool and earn RWD reward tokens, accruing continuously at a fixed 12% APY. The live rewards counter updates every animation frame client-side, re-synced against on-chain state every 7 seconds.
+Stakewell is a production-grade Stellar Soroban dApp where users stake native XLM into a smart contract pool and earn RWD reward tokens, accruing continuously at a fixed 12% APY. The live rewards [...]
 
-The architecture uses three real Soroban smart contracts deployed on Stellar Testnet, two provable inter-contract call chains, a Next.js 14 static frontend with 3D animated UI, and a GitHub Actions CI/CD pipeline with 4 jobs.
+The architecture uses three real Soroban smart contracts deployed on Stellar Testnet, two provable inter-contract call chains, a Next.js 14 static frontend with 3D animated UI, and a GitHub Action[...]
 
 ---
 
@@ -29,16 +29,16 @@ The architecture uses three real Soroban smart contracts deployed on Stellar Tes
                     │  Framer Motion  ── Live APY Ticker       │
                     └──────────────┬──────────────────────────┘
                                    │ Soroban RPC calls
-           ┌───────────────────────┼───────────────────────┐
-           │                       │                       │
-    ┌──────▼──────┐         ┌──────▼──────┐        ┌──────▼──────┐
-    │   Staking   │──────▶  │   Rewards   │──────▶ │    Token    │
-    │  Contract   │register │  Contract   │ mint   │  Contract   │
-    │             │_stake   │             │  RWD   │   (RWD)     │
-    │ Holds XLM   │         │ APY accrual │        │             │
-    └─────────────┘         └─────────────┘        └─────────────┘
-          │                                               │
-          └──── XLM SAC (native token transfer) ─────────┘
+               ┌───────────────────┼───────────────────────┐
+               │                   │                       │
+        ┌──────▼──────┐         ┌──────▼──────┐        ┌──────▼──────┐
+        │   Staking   │──────▶  │   Rewards   │──────▶ │    Token    │
+        │  Contract   │register │  Contract   │ mint   │  Contract   │
+        │             │_stake   │             │  RWD   │   (RWD)     │
+        │ Holds XLM   │         │ APY accrual │        │             │
+        └─────────────┘         └─────────────┘        └─────────────┘
+              │                                               │
+              └──── XLM SAC (native token transfer) ─────────┘
 ```
 
 **Inter-contract call chain:**
@@ -60,7 +60,7 @@ The architecture uses three real Soroban smart contracts deployed on Stellar Tes
 | Deployment | Cloudflare Pages (static export) |
 | CI/CD | GitHub Actions (4 jobs) |
 
-**Note on native XLM:** The staked asset is native XLM handled via the Stellar Asset Contract (SAC) interface. We deliberately do not write a redundant XLM token contract — the Staking contract interacts with the predeployed native XLM SAC directly. This is the standard and correct Soroban pattern.
+**Note on native XLM:** The staked asset is native XLM handled via the Stellar Asset Contract (SAC) interface. We deliberately do not write a redundant XLM token contract — the Staking contract [...]
 
 ---
 
@@ -83,15 +83,15 @@ All addresses begin with `C` and are 56 characters — verified against the Stel
 
 **When:** Called on every `stake` and `unstake` invocation in the Staking contract.
 
-**Why:** Before any principal change, the Rewards contract must settle (checkpoint) the user's pending accrual against the *old* principal. `register_stake(user, new_total_principal)` computes elapsed-time accrual on the old principal, adds it to `accrued_unclaimed`, resets `checkpoint_time = now`, then sets `principal = new_total`. This guarantees no rewards are lost when the staked amount changes.
+**Why:** Before any principal change, the Rewards contract must settle (checkpoint) the user's pending accrual against the *old* principal. `register_stake(user, new_total_principal)` computes ela[...]
 
-**Code location:** `contracts/staking/src/lib.rs` — `StakingContract::stake()` and `StakingContract::unstake()`, both call `rewards_contract::Client::new(&env, &config.rewards_contract).register_stake(...)`.
+**Code location:** `contracts/staking/src/lib.rs` — `StakingContract::stake()` and `StakingContract::unstake()`, both call `rewards_contract::Client::new(&env, &config.rewards_contract).register[...]
 
 ### Rewards → Token: `mint`
 
 **When:** Called inside `claim_rewards` in the Rewards contract.
 
-**Why:** After settling the user's accrual and computing the total RWD owed, the Rewards contract calls `token_contract::Client::new(&env, &config.token_address).mint(&user, &total)` to actually transfer RWD tokens to the user's wallet. The Token contract enforces that only the Rewards contract (the registered `mint_authority`) can mint — this is verified at `init` time and enforced with `authority.require_auth()` on every mint call.
+**Why:** After settling the user's accrual and computing the total RWD owed, the Rewards contract calls `token_contract::Client::new(&env, &config.token_address).mint(&user, &total)` to actually t[...]
 
 **Code location:** `contracts/rewards/src/lib.rs` — `RewardsContract::claim_rewards()`.
 
@@ -101,9 +101,9 @@ All three hashes below are exactly 64 lowercase hex characters, verified on Stel
 
 | Action | Transaction Hash | Explorer |
 |--------|----------------|---------|
-| `stake` (100 XLM) | `db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b5af1e24a9248a8` | [View ↗](https://stellar.expert/explorer/testnet/tx/db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b5af1e24a9248a8) |
-| `claim_rewards` | `31678b7cff957aad5a56531e07825ece393e906836d24d05286f96bdfb511b0b` | [View ↗](https://stellar.expert/explorer/testnet/tx/31678b7cff957aad5a56531e07825ece393e906836d24d05286f96bdfb511b0b) |
-| `unstake` (50 XLM) | `1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29727a6ff4b61ad3b` | [View ↗](https://stellar.expert/explorer/testnet/tx/1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29727a6ff4b61ad3b) |
+| `stake` (100 XLM) | `db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b5af1e24a9248a8` | [View ↗](https://stellar.expert/explorer/testnet/tx/db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b[...]
+| `claim_rewards` | `31678b7cff957aad5a56531e07825ece393e906836d24d05286f96bdfb511b0b` | [View ↗](https://stellar.expert/explorer/testnet/tx/31678b7cff957aad5a56531e07825ece393e906836d24d05286f[...]
+| `unstake` (50 XLM) | `1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29727a6ff4b61ad3b` | [View ↗](https://stellar.expert/explorer/testnet/tx/1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29[...]
 
 **Claim tx evidence:** The claim transaction shows two events:
 - Token contract `CAAYCV3…` emits `mint` event with amount `175`
@@ -122,7 +122,7 @@ Wallet integration uses `@creit.tech/stellar-wallets-kit` v2.4.0 (static API, v2
 - `StellarWalletsKit.signTransaction(xdr, { networkPassphrase, address })` — signs without submitting
 - `StellarWalletsKit.disconnect()` — clears wallet state
 
-The connected address is truncated (`GABCD…XY12`) in the nav, with full address and XLM balance shown in the dropdown. Balance is polled via Horizon every 8 seconds and refreshed after every transaction.
+The connected address is truncated (`GABCD…XY12`) in the nav, with full address and XLM balance shown in the dropdown. Balance is polled via Horizon every 8 seconds and refreshed after every tr[...]
 
 ---
 
@@ -140,9 +140,9 @@ accrual = principal_stroops × apy_bps × elapsed_seconds
 - `elapsed_seconds` — seconds since last checkpoint
 - Result is in RWD stroops (7 decimal places)
 
-**Live ticker:** The frontend computes accrual client-side at ~60fps using `requestAnimationFrame`, seeded with the on-chain `accrued_rewards` value polled every 7 seconds via SWR. This gives a smooth, continuously incrementing display that stays accurate.
+**Live ticker:** The frontend computes accrual client-side at ~60fps using `requestAnimationFrame`, seeded with the on-chain `accrued_rewards` value polled every 7 seconds via SWR. This gives a s[...]
 
-**Checkpoint model:** Every stake/unstake settles the pending accrual *before* changing the principal. So rewards are never lost when principal changes — they accumulate in `accrued_unclaimed` and are paid out on the next `claim_rewards` call.
+**Checkpoint model:** Every stake/unstake settles the pending accrual *before* changing the principal. So rewards are never lost when principal changes — they accumulate in `accrued_unclaimed` [...]
 
 ---
 
@@ -187,6 +187,13 @@ The main home screen layout including our custom 3D animated hero orb and real-t
 The user dashboard in a connected state, displaying the live incrementing reward ticker, current staked principal, and active unstake input:
 
 ![Stakewell Staking](screenshots/staking.png)
+
+---
+
+### 📱 Mobile View
+The responsive mobile interface showing the staking dashboard optimized for smaller screens:
+
+![Stakewell Mobile View](screenshots/CleanShot%202026-06-27%20at%2002.09.42@2x.png)
 
 ---
 

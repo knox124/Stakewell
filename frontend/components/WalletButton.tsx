@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { addRwdTokenToWallet } from '@/lib/wallet';
+import { CONTRACT_TOKEN, NETWORK_PASSPHRASE } from '@/lib/contracts';
+import type { TxStatus } from './TxToast';
 
 export interface WalletState {
   address: string | null;
@@ -14,10 +17,32 @@ interface WalletButtonProps {
   state: WalletState;
   onConnect: () => void;
   onDisconnect: () => void;
+  onTxStatus?: (status: TxStatus) => void;
 }
 
-export function WalletButton({ state, onConnect, onDisconnect }: WalletButtonProps) {
+export function WalletButton({ state, onConnect, onDisconnect, onTxStatus }: WalletButtonProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const [addingToken, setAddingToken] = useState(false);
+
+  const handleAddToken = async () => {
+    if (addingToken) return;
+    setAddingToken(true);
+    if (onTxStatus) {
+      onTxStatus({ state: 'pending', label: 'Adding RWD token to wallet' });
+    }
+
+    const result = await addRwdTokenToWallet(CONTRACT_TOKEN, NETWORK_PASSPHRASE);
+    setAddingToken(false);
+    setShowMenu(false);
+
+    if (onTxStatus) {
+      if (result.success) {
+        onTxStatus({ state: 'success', hash: '', label: 'RWD token successfully added to wallet!' });
+      } else {
+        onTxStatus({ state: 'error', message: result.error || 'Failed to add token.' });
+      }
+    }
+  };
 
   const truncate = (addr: string) => `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 
@@ -80,6 +105,15 @@ export function WalletButton({ state, onConnect, onDisconnect }: WalletButtonPro
               <p className="text-sm font-semibold text-brand-300 mt-0.5">{state.xlmBalance.toFixed(7)} XLM</p>
             </div>
             <button
+              onClick={handleAddToken}
+              disabled={addingToken}
+              className="w-full text-left px-3 py-3 text-sm text-brand-400 hover:bg-brand-500/10
+                transition-colors duration-150 flex items-center gap-2 border-b border-white/5 disabled:opacity-50"
+            >
+              <PlusIcon />
+              {addingToken ? 'Adding…' : 'Add RWD to Wallet'}
+            </button>
+            <button
               onClick={() => { setShowMenu(false); onDisconnect(); }}
               className="w-full text-left px-3 py-3 text-sm text-red-400 hover:bg-red-500/10
                 transition-colors duration-150 flex items-center gap-2"
@@ -121,6 +155,14 @@ function DisconnectIcon() {
   return (
     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg className="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
     </svg>
   );
 }

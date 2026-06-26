@@ -45,15 +45,17 @@ export function TxToast({ status, onDismiss }: TxToastProps) {
                 )}
                 {status.state === 'success' && (
                   <>
-                    <p className="text-sm font-semibold text-brand-300">{status.label} — Success</p>
-                    <a
-                      href={txLink(status.hash)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-brand-500 hover:text-brand-300 underline mt-0.5 block font-mono truncate"
-                    >
-                      {status.hash.slice(0, 16)}…{status.hash.slice(-8)} ↗
-                    </a>
+                    <p className="text-sm font-semibold text-brand-300">{status.label}</p>
+                    {status.hash && (
+                      <a
+                        href={txLink(status.hash)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-brand-500 hover:text-brand-300 underline mt-0.5 block font-mono truncate"
+                      >
+                        {status.hash.slice(0, 16)}…{status.hash.slice(-8)} ↗
+                      </a>
+                    )}
                   </>
                 )}
                 {status.state === 'cancelled' && (

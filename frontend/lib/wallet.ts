@@ -51,3 +51,26 @@ export async function signTransaction(xdrString: string, address: string): Promi
   });
   return result.signedTxXdr;
 }
+
+export async function addRwdTokenToWallet(contractId: string, networkPassphrase: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { addToken } = await import('@stellar/freighter-api');
+    const res = await addToken({
+      contractId,
+      networkPassphrase,
+    });
+    // The freighter addToken method returns an object that might have error property
+    if (res && typeof res === 'object' && 'error' in res && res.error) {
+      const errObj = res.error as { message?: string } | string;
+      return { 
+        success: false, 
+        error: typeof errObj === 'object' && errObj.message ? errObj.message : String(errObj) 
+      };
+    }
+    return { success: true };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: msg };
+  }
+}
+

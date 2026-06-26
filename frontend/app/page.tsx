@@ -163,7 +163,7 @@ export default function Home() {
             </span>
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-            <WalletButton state={wallet} onConnect={handleConnect} onDisconnect={handleDisconnect} />
+            <WalletButton state={wallet} onConnect={handleConnect} onDisconnect={handleDisconnect} onTxStatus={setTxStatus} />
           </motion.div>
         </div>
       </nav>

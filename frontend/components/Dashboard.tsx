@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RewardsTicker } from './RewardsTicker';
-import { STROOPS_PER_XLM, CONTRACT_STAKING, CONTRACT_REWARDS, APY_PERCENT, formatXLM } from '@/lib/contracts';
+import { STROOPS_PER_XLM, CONTRACT_STAKING, CONTRACT_REWARDS, CONTRACT_TOKEN, NETWORK_PASSPHRASE, APY_PERCENT, formatXLM } from '@/lib/contracts';
 import { invokeContract, addressToScVal, i128ToScVal } from '@/lib/stellar';
+import { addRwdTokenToWallet } from '@/lib/wallet';
 import type { TxStatus } from './TxToast';
 
 interface DashboardProps {
@@ -31,6 +32,23 @@ export function Dashboard({
   const [unstakeAmount, setUnstakeAmount] = useState('');
   const [claimLoading, setClaimLoading] = useState(false);
   const [unstakeLoading, setUnstakeLoading] = useState(false);
+  const [addingToken, setAddingToken] = useState(false);
+
+  const handleAddToken = async () => {
+    if (addingToken) return;
+    setAddingToken(true);
+    onTxStatus({ state: 'pending', label: 'Adding RWD token to wallet' });
+
+    const result = await addRwdTokenToWallet(CONTRACT_TOKEN, NETWORK_PASSPHRASE);
+    setAddingToken(false);
+
+    if (result.success) {
+      onTxStatus({ state: 'success', hash: '', label: 'RWD token successfully added to wallet!' });
+      setTimeout(() => onSuccess(), 4000);
+    } else {
+      onTxStatus({ state: 'error', message: result.error || 'Failed to add token.' });
+    }
+  };
 
   const stakedXLM = stakedStroops / STROOPS_PER_XLM;
   const unstakeXLM = parseFloat(unstakeAmount || '0');
@@ -113,25 +131,41 @@ export function Dashboard({
           onChainAccrued={onChainAccrued}
         />
 
-        {/* Claim button */}
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={handleClaim}
-          disabled={claimLoading}
-          className="btn-shine mt-6 px-8 py-3 rounded-xl bg-accent-500 hover:bg-accent-400
-            text-white font-semibold text-sm transition-all duration-200 disabled:opacity-50
-            disabled:cursor-wait shadow-lg shadow-accent-500/20"
-        >
-          {claimLoading ? (
-            <span className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Claiming…
-            </span>
-          ) : (
-            '✦ Claim Rewards'
-          )}
-        </motion.button>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
+          {/* Claim button */}
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleClaim}
+            disabled={claimLoading}
+            className="w-full sm:w-auto btn-shine px-8 py-3 rounded-xl bg-accent-500 hover:bg-accent-400
+              text-white font-semibold text-sm transition-all duration-200 disabled:opacity-50
+              disabled:cursor-wait shadow-lg shadow-accent-500/20"
+          >
+            {claimLoading ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Claiming…
+              </span>
+            ) : (
+              '✦ Claim Rewards'
+            )}
+          </motion.button>
+
+          {/* Add Token Button */}
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            type="button"
+            onClick={handleAddToken}
+            disabled={addingToken}
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-500/10 hover:bg-brand-500/20
+              text-brand-400 border border-brand-500/30 hover:border-brand-500/50
+              font-semibold text-sm transition-all duration-200 disabled:opacity-50"
+          >
+            {addingToken ? 'Adding…' : '＋ Add RWD to Wallet'}
+          </motion.button>
+        </div>
       </motion.div>
 
       {/* Stats row */}

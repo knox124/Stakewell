@@ -1,0 +1,22 @@
+# Rust
+target/
+Cargo.lock
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Environment
+.env
+.env.local
+.env.production
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Misc
+.DS_Store
+*.log
+.wrangler/

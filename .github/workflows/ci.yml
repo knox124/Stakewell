@@ -18,7 +18,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: wasm32-unknown-unknown
+          # wasm32v1-none is required by Stellar CLI v22+ (replaces wasm32-unknown-unknown)
+          # wasm32-unknown-unknown is still needed for cargo test (host builds)
+          targets: wasm32v1-none,wasm32-unknown-unknown
 
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
@@ -34,6 +36,8 @@ jobs:
           mv stellar /usr/local/bin/stellar
           stellar --version
 
+      # Build order matters: token first (no deps), then rewards (imports token WASM),
+      # then staking (imports rewards WASM). Tests also need all WASMs present.
       - name: Build token contract
         run: stellar contract build --package stakewell-token
 
@@ -66,10 +70,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Lint
         run: npm run lint

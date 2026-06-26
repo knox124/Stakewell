@@ -4,7 +4,7 @@
 ![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-blue?logo=stellar)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**Live Demo:** https://stakewell.pages.dev *(Cloudflare Pages — deploying via CI)*
+**Live Demo:** https://6a3eccb638d18b0007854a1a--admirable-youtiao-6bc257.netlify.app/
 
 > Stake native XLM on Stellar Soroban. Watch your RWD rewards accrue in real time at 12% APY. Claim or unstake at any time. Three real on-chain smart contracts. No stubs, no simulations.
 

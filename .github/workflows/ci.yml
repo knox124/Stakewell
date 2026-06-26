@@ -27,17 +27,20 @@ jobs:
 
       - name: Install Stellar CLI
         run: |
-          curl -sL https://github.com/stellar/stellar-cli/releases/download/v26.0.0/stellar-cli-26.0.0-x86_64-unknown-linux-musl.tar.gz | tar xz
+          VERSION=$(curl -s https://api.github.com/repos/stellar/stellar-cli/releases/latest | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+          echo "Installing Stellar CLI v${VERSION}"
+          curl -sL "https://github.com/stellar/stellar-cli/releases/download/v${VERSION}/stellar-cli-${VERSION}-x86_64-unknown-linux-gnu.tar.gz" -o stellar.tar.gz
+          tar -xzf stellar.tar.gz
           mv stellar /usr/local/bin/stellar
           stellar --version
 
-      - name: Build token contract (wasm32v1-none)
+      - name: Build token contract
         run: stellar contract build --package stakewell-token
 
-      - name: Build rewards contract (wasm32v1-none)
+      - name: Build rewards contract
         run: stellar contract build --package stakewell-rewards
 
-      - name: Build staking contract (wasm32v1-none)
+      - name: Build staking contract
         run: stellar contract build --package stakewell-staking
 
       - name: Run all contract tests
@@ -64,11 +67,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Lint
         run: npm run lint
@@ -79,10 +80,10 @@ jobs:
           NEXT_PUBLIC_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015"
           NEXT_PUBLIC_RPC_URL: "https://soroban-testnet.stellar.org"
           NEXT_PUBLIC_HORIZON_URL: "https://horizon-testnet.stellar.org"
-          NEXT_PUBLIC_CONTRACT_STAKING: ${{ secrets.NEXT_PUBLIC_CONTRACT_STAKING || '' }}
-          NEXT_PUBLIC_CONTRACT_REWARDS: ${{ secrets.NEXT_PUBLIC_CONTRACT_REWARDS || '' }}
-          NEXT_PUBLIC_CONTRACT_TOKEN: ${{ secrets.NEXT_PUBLIC_CONTRACT_TOKEN || '' }}
-          NEXT_PUBLIC_XLM_SAC: "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCN4"
+          NEXT_PUBLIC_CONTRACT_STAKING: "CCG6HAPL56CUOC4OY6SBNSY3KAOKK4SQIR6KWYW4KASFK52L3KGRG5TT"
+          NEXT_PUBLIC_CONTRACT_REWARDS: "CBI5EDHB5TK724BQKTEMIFL6I4DJFSAMTFEOBDBUCJMYQH77G7XLM4RV"
+          NEXT_PUBLIC_CONTRACT_TOKEN: "CAAYCV3BCFUA7UZ37XDFU5BMWNSF22JEESLB7CLARELHA22FHE7HA5MN"
+          NEXT_PUBLIC_XLM_SAC: "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
           NEXT_PUBLIC_APY_BPS: "1200"
 
       - name: Upload static export
@@ -100,33 +101,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-
-      - name: Cache Rust
-        uses: Swatinem/rust-cache@v2
-
       - name: Install Stellar CLI
         run: |
-          curl -sL https://github.com/stellar/stellar-cli/releases/download/v26.0.0/stellar-cli-26.0.0-x86_64-unknown-linux-musl.tar.gz | tar xz
+          VERSION=$(curl -s https://api.github.com/repos/stellar/stellar-cli/releases/latest | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+          curl -sL "https://github.com/stellar/stellar-cli/releases/download/v${VERSION}/stellar-cli-${VERSION}-x86_64-unknown-linux-gnu.tar.gz" -o stellar.tar.gz
+          tar -xzf stellar.tar.gz
           mv stellar /usr/local/bin/stellar
 
       - name: Download WASM artifacts
         uses: actions/download-artifact@v4
         with:
           name: wasm-contracts
-          path: target/wasm32v1-none/release/
+          path: wasm/
 
-      - name: Inspect token contract interface
-        run: stellar contract inspect --wasm target/wasm32v1-none/release/stakewell_token.wasm
+      - name: Inspect token contract ABI
+        run: stellar contract inspect --wasm wasm/stakewell_token.wasm
 
-      - name: Inspect rewards contract interface
-        run: stellar contract inspect --wasm target/wasm32v1-none/release/stakewell_rewards.wasm
+      - name: Inspect rewards contract ABI
+        run: stellar contract inspect --wasm wasm/stakewell_rewards.wasm
 
-      - name: Inspect staking contract interface
-        run: stellar contract inspect --wasm target/wasm32v1-none/release/stakewell_staking.wasm
+      - name: Inspect staking contract ABI
+        run: stellar contract inspect --wasm wasm/stakewell_staking.wasm
 
   # ── Job 4: Deploy to Cloudflare Pages (on main push only) ───────────────────
   deploy:

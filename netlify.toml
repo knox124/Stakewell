@@ -1,0 +1,10 @@
+[build]
+  base    = "frontend"
+  command = "npm install && npm run build"
+  publish = "out"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"

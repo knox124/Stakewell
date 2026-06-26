@@ -1,0 +1,9 @@
+{
+  "name": "stakewell",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "deploy": "npm run build && npx wrangler pages deploy frontend/out --project-name=stakewell"
+  }
+}

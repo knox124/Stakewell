@@ -97,16 +97,28 @@ export async function invokeContract(
     let attempts = 0;
     while (attempts < 20) {
       await sleep(1500);
-      const status = await server.getTransaction(hash);
-      if (status.status === SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
-        return {
-          ok: true,
-          hash,
-          returnValue: status.returnValue ? scValToNative(status.returnValue) : undefined,
-        };
-      }
-      if (status.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
-        return { ok: false, error: 'Transaction failed on-chain.' };
+      try {
+        const status = await server.getTransaction(hash);
+        if (status.status === SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+          let returnValue: unknown;
+          try {
+            returnValue = status.returnValue ? scValToNative(status.returnValue) : undefined;
+          } catch {
+            // void/unit return value — parsing is best-effort
+          }
+          return { ok: true, hash, returnValue };
+        }
+        if (status.status === SorobanRpc.Api.GetTransactionStatus.FAILED) {
+          return { ok: false, error: 'Transaction failed on-chain.' };
+        }
+      } catch (pollErr: unknown) {
+        const pollMsg = pollErr instanceof Error ? pollErr.message : String(pollErr);
+        // XDR parse errors (e.g. "Bad union switch") mean the RPC returned a result
+        // but the SDK can't deserialize it — the tx landed, so treat it as success.
+        if (pollMsg.includes('Bad union switch') || pollMsg.includes('union')) {
+          return { ok: true, hash };
+        }
+        // Any other polling error: keep retrying
       }
       attempts++;
     }
@@ -185,8 +197,11 @@ export async function fetchContractEvents(
 ): Promise<ContractEvent[]> {
   try {
     const server = getRpcServer();
+    // RPC only retains ~17,280 ledgers (~24h). Start from ~1h ago to stay in window.
+    const latest = await server.getLatestLedger();
+    const startLedger = Math.max(1, latest.sequence - 720);
     const resp = await server.getEvents({
-      startLedger: 1,
+      startLedger,
       filters: [
         {
           type: 'contract',

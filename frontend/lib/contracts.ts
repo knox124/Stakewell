@@ -27,8 +27,9 @@ export const CONTRACT_TOKEN =
   process.env.NEXT_PUBLIC_CONTRACT_TOKEN || '';
 
 // XLM Stellar Asset Contract address on testnet
+// Verified via: stellar contract id asset --asset native --network testnet
 export const XLM_SAC_ADDRESS =
-  process.env.NEXT_PUBLIC_XLM_SAC || 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCN4';
+  process.env.NEXT_PUBLIC_XLM_SAC || 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC';
 
 // APY in basis points (set at contract deploy time)
 export const APY_BPS = parseInt(process.env.NEXT_PUBLIC_APY_BPS || '1200');

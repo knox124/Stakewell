@@ -6,10 +6,7 @@
 
 **Live Demo:** https://6a3eccb638d18b0007854a1a--admirable-youtiao-6bc257.netlify.app/
 
-<p align="center">
-  <img alt="CI/CD Passing" src="screenshots/CleanShot%202026-06-28%20at%2014.27.28@2x.png" width="640" />
-  <img alt="Contracts Tests Passing" src="screenshots/CleanShot%202026-06-28%20at%2014.28.26@2x.png" width="640" />
-</p>
+
 
 > Stake native XLM on Stellar Soroban. Watch your RWD rewards accrue in real time at 12% APY. Claim or unstake at any time. Three real on-chain smart contracts. No stubs, no simulations.
 

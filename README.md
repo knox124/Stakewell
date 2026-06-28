@@ -34,7 +34,7 @@ The architecture uses three real Soroban smart contracts deployed on Stellar Tes
         ┌──────▼──────┐         ┌──────▼──────┐        ┌──────▼──────┐
         │   Staking   │──────▶  │   Rewards   │──────▶ │    Token    │
         │  Contract   │register │  Contract   │ mint   │  Contract   │
-        │             │_stake   │             │  RWD   │   (RWD)     │
+        │             │_stake   │             │  RWD   │  (RWD)      │
         │ Holds XLM   │         │ APY accrual │        │             │
         └─────────────┘         └─────────────┘        └─────────────┘
               │                                               │
@@ -101,9 +101,9 @@ All three hashes below are exactly 64 lowercase hex characters, verified on Stel
 
 | Action | Transaction Hash | Explorer |
 |--------|----------------|---------|
-| `stake` (100 XLM) | `db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b5af1e24a9248a8` | [View ↗](https://stellar.expert/explorer/testnet/tx/db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b[...]
-| `claim_rewards` | `31678b7cff957aad5a56531e07825ece393e906836d24d05286f96bdfb511b0b` | [View ↗](https://stellar.expert/explorer/testnet/tx/31678b7cff957aad5a56531e07825ece393e906836d24d05286f[...]
-| `unstake` (50 XLM) | `1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29727a6ff4b61ad3b` | [View ↗](https://stellar.expert/explorer/testnet/tx/1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29[...]
+| `stake` (100 XLM) | `db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b5af1e24a9248a8` | [View ↗](https://stellar.expert/explorer/testnet/tx/db240745cb53da3a3fb15381927fc3e72e0e03380ee0ad0c4b5af1e24a9248a8) |
+| `claim_rewards` | `31678b7cff957aad5a56531e07825ece393e906836d24d05286f96bdfb511b0b` | [View ↗](https://stellar.expert/explorer/testnet/tx/31678b7cff957aad5a56531e07825ece393e906836d24d05286f96bdfb511b0b) |
+| `unstake` (50 XLM) | `1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29727a6ff4b61ad3b` | [View ↗](https://stellar.expert/explorer/testnet/tx/1e29597a71dca24da2cce6d1391f62b52c5843dc53843aa29727a6ff4b61ad3b) |
 
 **Claim tx evidence:** The claim transaction shows two events:
 - Token contract `CAAYCV3…` emits `mint` event with amount `175`
@@ -194,6 +194,20 @@ The user dashboard in a connected state, displaying the live incrementing reward
 The responsive mobile interface showing the staking dashboard optimized for smaller screens:
 
 ![Stakewell Mobile View](screenshots/CleanShot%202026-06-27%20at%2002.09.42@2x.png)
+
+---
+
+### ✅ CI/CD — All checks passed
+A summary popover from GitHub showing four successful CI jobs (Contracts, Deploy, Frontend, Integration):
+
+![CI/CD Passing](screenshots/ci-cd-passing.png)
+
+---
+
+### ✅ Contracts — Tests passed
+Contract test output from the GitHub Actions "Contracts — Test & Build" job showing multiple Rust tests completing successfully (4 + 2 + 3 tests) and doc-tests:
+
+![Contracts Tests Passing](screenshots/contracts-tests-passing.png)
 
 ---
 

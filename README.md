@@ -6,6 +6,11 @@
 
 **Live Demo:** https://6a3eccb638d18b0007854a1a--admirable-youtiao-6bc257.netlify.app/
 
+<p align="center">
+  <img alt="CI/CD Passing" src="screenshots/CleanShot%202026-06-28%20at%2014.27.28@2x.png" width="640" />
+  <img alt="Contracts Tests Passing" src="screenshots/CleanShot%202026-06-28%20at%2014.28.26@2x.png" width="640" />
+</p>
+
 > Stake native XLM on Stellar Soroban. Watch your RWD rewards accrue in real time at 12% APY. Claim or unstake at any time. Three real on-chain smart contracts. No stubs, no simulations.
 
 ---
@@ -200,14 +205,14 @@ The responsive mobile interface showing the staking dashboard optimized for smal
 ### ✅ CI/CD — All checks passed
 A summary popover from GitHub showing four successful CI jobs (Contracts, Deploy, Frontend, Integration):
 
-![CI/CD Passing](screenshots/ci-cd-passing.png)
+![CI/CD Passing](screenshots/CleanShot%202026-06-28%20at%2014.27.28@2x.png)
 
 ---
 
 ### ✅ Contracts — Tests passed
 Contract test output from the GitHub Actions "Contracts — Test & Build" job showing multiple Rust tests completing successfully (4 + 2 + 3 tests) and doc-tests:
 
-![Contracts Tests Passing](screenshots/contracts-tests-passing.png)
+![Contracts Tests Passing](screenshots/CleanShot%202026-06-28%20at%2014.28.26@2x.png)
 
 ---
 
